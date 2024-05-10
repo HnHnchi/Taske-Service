@@ -1,0 +1,29 @@
+using System.Diagnostics;
+using System.IO;
+using System.Net.NetworkInformation;
+
+PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+
+float cpuUsage = cpuCounter.NextValue();
+Console.WriteLine($"CPU Usage: {cpuUsage}%");
+DriveInfo driveInfo = new DriveInfo("C");
+long totalSpace = driveInfo.TotalSize;
+long freeSpace = driveInfo.AvailableFreeSpace;
+
+Console.WriteLine($"Total Space: {totalSpace} bytes");
+Console.WriteLine($"Free Space: {freeSpace} bytes");
+
+NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+
+foreach (NetworkInterface networkInterface in networkInterfaces)
+{
+    Console.WriteLine($"Interface: {networkInterface.Description}");
+    Console.WriteLine($"Bytes Received: {networkInterface.GetIPv4Statistics().BytesReceived}");
+    Console.WriteLine($"Bytes Sent: {networkInterface.GetIPv4Statistics().BytesSent}");
+}
+using (StreamWriter writer = new StreamWriter("output.txt"))
+{
+    writer.WriteLine($"CPU Usage: {cpuUsage}%");
+    writer.WriteLine($"Total Space: {totalSpace} bytes");
+    writer.WriteLine($"Free Space: {freeSpace} bytes");
+}
